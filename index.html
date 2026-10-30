@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>情緒星空</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <!-- 星空與特效畫布（背景全由程式產生） -->
+  <canvas id="sky"></canvas>
+
+  <!-- 鏡頭影像只供偵測使用，不顯示在畫面上 -->
+  <video id="cam" autoplay muted playsinline></video>
+
+  <!-- 開始頁 -->
+  <section id="start-screen">
+    <h1>情緒星空</h1>
+    <p class="subtitle">讓夜空映照你的心情</p>
+    <div class="modes">
+      <div class="mode">
+        <button id="start-btn" class="main-btn">情緒星空</button>
+        <p class="hint">用鏡頭辨識表情，讓天空跟著心情變化<br />影像只在本機分析，不會出現真人畫面</p>
+      </div>
+      <div class="mode">
+        <button id="breath-btn" class="main-btn">呼吸星空瓶</button>
+        <p class="hint">跟著節奏慢慢呼吸<br />每一次呼吸，都有一顆星落進瓶子裡</p>
+      </div>
+    </div>
+    <p id="status"></p>
+  </section>
+
+  <!-- 呼吸星空瓶 -->
+  <section id="breath-screen" class="hidden">
+    <button id="breath-back" class="back-btn">← 返回</button>
+    <div id="star-bar" role="img"></div>
+    <h2>呼吸星空瓶</h2>
+    <div id="breath-patterns" class="tabs">
+      <button data-pattern="calm" class="active">平靜 4·6</button>
+      <button data-pattern="box">方塊 4·4·4·4</button>
+      <button data-pattern="relax">放鬆 4·7·8</button>
+    </div>
+    <canvas id="jar"></canvas>
+    <div id="breath-phase"></div>
+    <div id="breath-line"><span></span></div>
+    <div id="breath-count"></div>
+    <button id="breath-toggle" class="ghost-btn">開始</button>
+  </section>
+
+  <!-- 主畫面 UI -->
+  <div id="hud" class="hidden">
+    <div id="mood-panel">
+      <div id="mood-emoji">🔍</div>
+      <div id="mood-label">尋找中</div>
+      <div id="mood-conf"></div>
+    </div>
+    <div id="manual">
+      <button data-mood="auto" class="active">自動</button>
+      <button data-mood="normal">😐 正常</button>
+      <button data-mood="happy">😄 開心</button>
+      <button data-mood="sad">😢 傷心</button>
+      <button data-mood="angry">😠 憤怒</button>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@vladmandic/face-api@1.7.15/dist/face-api.js"></script>
+  <script src="js/sky.js"></script>
+  <script src="js/emotion.js"></script>
+  <script src="js/breath.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>
