@@ -386,9 +386,9 @@ const Breath = (() => {
 
   function draw(t) {
     const g = geom();
-    // 呼吸燈：亮度歸零時整個瓶子連同光暈、倒影、浮塵全暗
+    // 呼吸燈：亮度歸零時光暈、光池、浮塵與瓶內光全暗，但瓶子本身保留淡淡輪廓
     const light = glow;
-    const vis = Math.min(1, light * 1.6);
+    const vis = 0.45 + 0.55 * Math.min(1, light * 1.6);
     renderJar(g, t, light);
 
     ctx.clearRect(0, 0, w, h);
