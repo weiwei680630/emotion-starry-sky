@@ -81,7 +81,16 @@ html, body {
   box-shadow: 0 0 36px rgba(140, 190, 255, 0.7);
 }
 .main-btn:disabled { opacity: 0.5; cursor: wait; }
-#status { min-height: 1.4em; font-size: 0.9rem; opacity: 0.8; }
+#status { min-height: 1.4em; max-width: 30em; font-size: 0.9rem; line-height: 1.7; opacity: 0.85; }
+.link-btn {
+  margin-top: 6px;
+  font-size: 0.85rem;
+  color: #9fc2ff;
+  background: none;
+  border: none;
+  text-decoration: underline;
+  cursor: pointer;
+}
 
 /* ---------- 呼吸星空瓶 ---------- */
 /* 美術方向：黑暗房間裡唯一的光。介面退到背景，只讓星空瓶說話 */

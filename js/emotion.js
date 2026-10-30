@@ -12,20 +12,28 @@ const Emotion = (() => {
 
   async function init(videoEl) {
     video = videoEl;
-    await faceapi.tf.setBackend("webgl"); // WebGL 加速
+    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+      throw Object.assign(new Error("no getUserMedia"), { name: "NoMediaDevices" });
+    }
+    // 先開鏡頭：權限詢問立刻跳出，失敗原因也比較明確
+    const stream = await navigator.mediaDevices.getUserMedia({
+      video: { width: { ideal: 640 }, height: { ideal: 480 }, facingMode: "user" },
+      audio: false,
+    });
+    video.srcObject = stream;
+    // 手機（尤其 iPhone 低耗電模式）不會自動播放，要明確呼叫 play()
+    await video.play().catch(() => {});
+    if (video.readyState < 2) await new Promise((r) => (video.onloadeddata = r));
+
+    // WebGL 加速；部分手機不支援時退回 CPU（較慢但能用）
+    const ok = await faceapi.tf.setBackend("webgl").catch(() => false);
+    if (!ok) await faceapi.tf.setBackend("cpu");
     await faceapi.tf.ready();
     await Promise.all([
       faceapi.nets.tinyFaceDetector.loadFromUri(MODEL_URL),
       faceapi.nets.faceExpressionNet.loadFromUri(MODEL_URL),
     ]);
     options = new faceapi.TinyFaceDetectorOptions({ inputSize: 320, scoreThreshold: 0.4 });
-
-    const stream = await navigator.mediaDevices.getUserMedia({
-      video: { width: 640, height: 480, facingMode: "user" },
-      audio: false,
-    });
-    video.srcObject = stream;
-    await new Promise((r) => (video.onloadeddata = r));
   }
 
   // 7 種表情合併成 4 種情緒，並正規化成總和為 1
