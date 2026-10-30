@@ -122,27 +122,41 @@ html, body {
   color: var(--dim);
 }
 
+/* 返回按鈕：兩個功能共用，手機上至少 40px 高好點擊 */
 .back-btn {
   position: absolute;
-  top: 18px;
-  left: 16px;
-  padding: 6px 4px;
-  font-size: 0.85rem;
+  top: max(14px, env(safe-area-inset-top));
+  left: 14px;
+  z-index: 5;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 40px;
+  padding: 8px 18px 8px 14px;
+  font-size: 0.9rem;
   letter-spacing: 0.15em;
-  color: var(--dim, rgba(225, 235, 255, 0.75));
-  background: none;
-  border: none;
+  color: #e6eeff;
+  background: rgba(10, 20, 40, 0.55);
+  border: 1px solid rgba(170, 210, 255, 0.35);
+  border-radius: 999px;
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  -webkit-tap-highlight-color: transparent;
   cursor: pointer;
-  transition: color 0.3s ease;
+  transition: background 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
 }
-.back-btn:hover { color: var(--ink, #fff); }
-/* 情緒星空的返回鍵：疊在星空上，加陰影讓文字在亮處也看得清楚 */
-#hud .back-btn { position: fixed; z-index: 5; text-shadow: 0 1px 6px rgba(0, 0, 0, 0.8); }
+.back-btn:hover,
+.back-btn:active {
+  background: rgba(60, 110, 230, 0.3);
+  border-color: rgba(170, 210, 255, 0.7);
+  box-shadow: 0 0 18px rgba(80, 140, 255, 0.4);
+}
+#hud .back-btn { position: fixed; }
 
 /* 右上角星星進度條 */
 #star-bar {
   position: absolute;
-  top: 22px;
+  top: max(27px, calc(env(safe-area-inset-top) + 13px)); /* 與返回按鈕垂直置中對齊 */
   right: 18px;
   display: flex;
   gap: 6px;
@@ -247,7 +261,7 @@ html, body {
 #breath-screen.running .ghost-btn:hover { opacity: 1; }
 
 @media (max-width: 480px) {
-  #star-bar { gap: 4px; top: 24px; }
+  #star-bar { gap: 4px; top: max(29px, calc(env(safe-area-inset-top) + 15px)); }
   .bar-star { width: 11px; height: 11px; }
   #breath-phase { font-size: 1.6rem; }
   #breath-count { font-size: 2.4rem; }
