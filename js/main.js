@@ -17,7 +17,10 @@
   const confEl = document.getElementById("mood-conf");
   const manual = document.getElementById("manual");
 
+  const autoBtn = manual.querySelector('[data-mood="auto"]');
+
   let auto = true;
+  let active = false; // 是否在情緒星空畫面
   let shown = null;
 
   function showMood(key, confidence) {
@@ -34,9 +37,26 @@
   }
 
   function enterMain() {
+    active = true;
     startScreen.classList.add("fade");
     hud.classList.remove("hidden");
   }
+
+  // 情緒星空返回：停止偵測、關閉鏡頭，恢復初始狀態回到開始頁
+  document.getElementById("emotion-back").addEventListener("click", () => {
+    active = false;
+    Emotion.stop();
+    hud.classList.add("hidden");
+    startScreen.classList.remove("fade");
+    startBtn.disabled = false;
+    breathBtn.disabled = false;
+    status.textContent = "";
+    auto = true;
+    autoBtn.hidden = false;
+    manual.querySelectorAll("button").forEach((b) => b.classList.toggle("active", b === autoBtn));
+    showMood("none");
+    Sky.setMood("normal");
+  });
 
   // 呼吸星空瓶：不需要鏡頭，返回時回到開始頁
   const breathBtn = document.getElementById("breath-btn");
@@ -73,8 +93,9 @@
   function manualMode() {
     enterMain();
     auto = false;
-    manual.querySelector('[data-mood="auto"]')?.remove();
-    manual.querySelector('[data-mood="normal"]').classList.add("active");
+    autoBtn.hidden = true;
+    manual.querySelectorAll("button").forEach((b) => b.classList.toggle("active", b.dataset.mood === "normal"));
+    Sky.setMood("normal");
     showMood("normal");
     confEl.textContent = "手動模式";
   }
@@ -87,7 +108,7 @@
       await Emotion.init(document.getElementById("cam"));
       enterMain();
       Emotion.start(({ mood, scores }) => {
-        if (!auto) return;
+        if (!active || !auto) return;
         if (mood) Sky.setMood(mood);
         showMood(mood || "none", mood && scores[mood]);
       });

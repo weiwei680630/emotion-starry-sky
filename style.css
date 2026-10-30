@@ -129,13 +129,15 @@ html, body {
   padding: 6px 4px;
   font-size: 0.85rem;
   letter-spacing: 0.15em;
-  color: var(--dim);
+  color: var(--dim, rgba(225, 235, 255, 0.75));
   background: none;
   border: none;
   cursor: pointer;
   transition: color 0.3s ease;
 }
-.back-btn:hover { color: var(--ink); }
+.back-btn:hover { color: var(--ink, #fff); }
+/* 情緒星空的返回鍵：疊在星空上，加陰影讓文字在亮處也看得清楚 */
+#hud .back-btn { position: fixed; z-index: 5; text-shadow: 0 1px 6px rgba(0, 0, 0, 0.8); }
 
 /* 右上角星星進度條 */
 #star-bar {

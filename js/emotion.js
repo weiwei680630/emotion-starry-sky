@@ -9,6 +9,7 @@ const Emotion = (() => {
   let video, options, onChange;
   let smoothed = null;
   let current = null, candidate = null, candidateSince = 0;
+  let timer = 0, running = false;
 
   async function init(videoEl) {
     video = videoEl;
@@ -29,7 +30,8 @@ const Emotion = (() => {
     const ok = await faceapi.tf.setBackend("webgl").catch(() => false);
     if (!ok) await faceapi.tf.setBackend("cpu");
     await faceapi.tf.ready();
-    await Promise.all([
+    // 返回後再次進入時，模型已載入就不必重載
+    if (!faceapi.nets.faceExpressionNet.isLoaded) await Promise.all([
       faceapi.nets.tinyFaceDetector.loadFromUri(MODEL_URL),
       faceapi.nets.faceExpressionNet.loadFromUri(MODEL_URL),
     ]);
@@ -76,12 +78,26 @@ const Emotion = (() => {
 
   function start(cb) {
     onChange = cb;
+    running = true;
     const loop = async () => {
       try { await tick(); } catch (e) { console.warn(e); }
-      setTimeout(loop, INTERVAL);
+      if (running) timer = setTimeout(loop, INTERVAL);
     };
     loop();
   }
 
-  return { init, start };
+  // 停止偵測並關閉鏡頭
+  function stop() {
+    running = false;
+    clearTimeout(timer);
+    if (video && video.srcObject) {
+      video.srcObject.getTracks().forEach((t) => t.stop());
+      video.srcObject = null;
+    }
+    smoothed = null;
+    current = null;
+    candidate = null;
+  }
+
+  return { init, start, stop };
 })();
